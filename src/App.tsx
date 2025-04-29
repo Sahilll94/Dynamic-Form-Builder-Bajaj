@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// Type definitions
 interface User {
   rollNumber: string;
   name: string;
@@ -52,7 +51,6 @@ interface FormResponse {
   form: FormData;
 }
 
-// Main App Component
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -63,13 +61,11 @@ export default function App() {
   const [formValues, setFormValues] = useState<Record<string, any>>({});
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Handle login
   const handleLogin = async (userData: User) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Register user
       const userResponse = await fetch(
         "https://dynamic-form-generator-9rl7.onrender.com/create-user",
         {
@@ -85,7 +81,6 @@ export default function App() {
         throw new Error("Failed to register user");
       }
 
-      // Fetch form data
       const formResponse = await fetch(
         `https://dynamic-form-generator-9rl7.onrender.com/get-form?rollNumber=${userData.rollNumber}`
       );
@@ -100,7 +95,6 @@ export default function App() {
       setFormData(data.form);
       setIsLoggedIn(true);
 
-      // Initialize form values with empty values
       const initialValues: Record<string, any> = {};
       data.form.sections.forEach((section) => {
         section.fields.forEach((field) => {
@@ -120,14 +114,12 @@ export default function App() {
     }
   };
 
-  // Handle form input changes
   const handleInputChange = (fieldId: string, value: any) => {
     setFormValues((prev) => ({
       ...prev,
       [fieldId]: value,
     }));
 
-    // Clear error when user starts typing
     if (formErrors[fieldId]) {
       setFormErrors((prev) => {
         const newErrors = { ...prev };
@@ -137,9 +129,7 @@ export default function App() {
     }
   };
 
-  // Validate a single field
   const validateField = (field: FormField, value: any): string | null => {
-    // Check if required
     if (
       field.required &&
       (value === "" || value === null || value === undefined)
@@ -147,7 +137,6 @@ export default function App() {
       return field.validation?.message || "This field is required";
     }
 
-    // Check minLength
     if (
       field.minLength &&
       typeof value === "string" &&
@@ -156,7 +145,6 @@ export default function App() {
       return `Minimum length is ${field.minLength} characters`;
     }
 
-    // Check maxLength
     if (
       field.maxLength &&
       typeof value === "string" &&
@@ -165,12 +153,10 @@ export default function App() {
       return `Maximum length is ${field.maxLength} characters`;
     }
 
-    // Email validation
     if (field.type === "email" && value && !/^\S+@\S+\.\S+$/.test(value)) {
       return "Please enter a valid email address";
     }
 
-    // Phone validation
     if (field.type === "tel" && value && !/^\d{10}$/.test(value)) {
       return "Please enter a valid 10-digit phone number";
     }
@@ -178,7 +164,6 @@ export default function App() {
     return null;
   };
 
-  // Validate current section
   const validateSection = (sectionIndex: number): boolean => {
     if (!formData) return false;
 
@@ -198,7 +183,6 @@ export default function App() {
     return isValid;
   };
 
-  // Navigate to next section
   const handleNextSection = () => {
     if (!formData) return;
 
@@ -211,12 +195,10 @@ export default function App() {
     }
   };
 
-  // Navigate to previous section
   const handlePrevSection = () => {
     setCurrentSection((prev) => Math.max(prev - 1, 0));
   };
 
-  // Handle form submission
   const handleSubmit = () => {
     if (!formData) return;
 
@@ -227,7 +209,6 @@ export default function App() {
     }
   };
 
-  // Render field based on type
   const renderField = (field: FormField) => {
     const error = formErrors[field.fieldId];
 
@@ -398,7 +379,6 @@ export default function App() {
     }
   };
 
-  // Render form section
   const renderSection = (section: FormSection, index: number) => {
     const isLastSection = formData && index === formData.sections.length - 1;
 
@@ -444,7 +424,6 @@ export default function App() {
     );
   };
 
-  // Login Component
   const LoginForm = () => {
     const [rollNumber, setRollNumber] = useState("");
     const [name, setName] = useState("");
